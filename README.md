@@ -45,4 +45,4 @@ todo-list-app/
 
 ---
 
-> ساخته‌شده با ❤️ توسط [KEANU2003](https://github.com/KEANU2003)
+> ساخته‌شده با ❤️ توسط [KEANU2003](https://t.me/KEANU2003)
