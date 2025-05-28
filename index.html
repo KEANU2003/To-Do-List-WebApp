@@ -1,27 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-   <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>To-Do List App</title>
-    <Link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css" />
 </head>
 <body>
     <div class="container">
         <div class="todo-app">
-            <h2>To-Do List <img src="images/todolist-icon.svg" height="50px"></h2>
+            <h2>
+                To-Do List
+                <img src="images/todolist-icon.svg" alt="To-Do Icon" height="50" />
+            </h2>
             <div class="row">
-                <input type="text" id="input-box" placeholder="Add your text">
-                <button onclick="addTask()">Add</button>
+                <input
+                    type="text"
+                    id="input-box"
+                    placeholder="Add your task"
+                    aria-label="Add your task"
+                />
+                <button id="add-btn">Add</button>
             </div>
-            <ul id="list-container">
-                <li class="checked">Task 1</li>
-                <br>
-                <li>Task 2</li>
-                <br>
-                <li>Task 3</li>
-            </ul>
+            <ul id="list-container" aria-live="polite"></ul>
         </div>
-        <script src="script.js"></script>
     </div>
+    <script src="script.js"></script>
 </body>
 </html>
