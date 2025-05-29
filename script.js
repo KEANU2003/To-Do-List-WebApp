@@ -1,108 +1,127 @@
 const inputBox = document.getElementById("input-box");
+const deadlineInput = document.getElementById("deadline");
 const listContainer = document.getElementById("list-container");
-const counter = document.getElementById("counter");
+const filterSelect = document.getElementById("filter-tasks");
+const darkToggle = document.getElementById("darkModeToggle");
+const clearAll = document.getElementById("clear-all");
 
+// Task creation
 function addTask() {
-  if (inputBox.value.trim() === "") {
+  const taskText = inputBox.value.trim();
+  const deadline = deadlineInput.value;
+
+  if (taskText === "") {
     alert("Please enter a task!");
     return;
   }
 
-  let li = document.createElement("li");
-  li.innerHTML = inputBox.value;
+  const li = document.createElement("li");
+  li.classList.add("fade-in");
 
-  let span = document.createElement("span");
-  span.innerHTML = "\u00d7";
-  li.appendChild(span);
+  const now = new Date();
+  const timestamp = now.toLocaleString();
 
+  li.innerHTML = `
+    ${taskText}
+    <span class="timestamp">Created: ${timestamp}</span>
+    ${deadline ? `<span class="deadline-date">Deadline: ${deadline}</span>` : ""}
+  `;
+
+  const closeBtn = document.createElement("span");
+  closeBtn.innerHTML = "\u00d7";
+  li.appendChild(closeBtn);
   listContainer.appendChild(li);
+
   inputBox.value = "";
+  deadlineInput.value = "";
+
   saveData();
-  updateCounter();
-  showToast("Task added!");
+  applyFilter();
 }
 
-inputBox.addEventListener("keypress", function (e) {
-  if (e.key === "Enter") {
-    addTask();
-  }
-});
-
-listContainer.addEventListener("click", function (e) {
+// Event listeners
+listContainer.addEventListener("click", (e) => {
   if (e.target.tagName === "LI") {
     e.target.classList.toggle("checked");
     saveData();
-    updateCounter();
   } else if (e.target.tagName === "SPAN") {
     e.target.parentElement.remove();
     saveData();
-    updateCounter();
-    showToast("Task deleted!");
   }
 });
 
-listContainer.addEventListener("dblclick", function (e) {
-  if (e.target.tagName === "LI") {
-    const originalText = e.target.textContent.replace("×", "");
-    const newText = prompt("Edit task:", originalText);
-    if (newText && newText.trim() !== "") {
-      e.target.firstChild.nodeValue = newText;
-      saveData();
-      updateCounter();
-      showToast("Task updated!");
-    }
+filterSelect.addEventListener("change", applyFilter);
+
+clearAll.addEventListener("click", () => {
+  if (confirm("Are you sure you want to clear all tasks?")) {
+    listContainer.innerHTML = "";
+    saveData();
   }
 });
 
-function filterTasks(type) {
-  const tasks = listContainer.querySelectorAll("li");
-  tasks.forEach((li) => {
-    li.style.display = "block";
-    if (type === "done" && !li.classList.contains("checked"))
-      li.style.display = "none";
-    if (type === "undone" && li.classList.contains("checked"))
-      li.style.display = "none";
-  });
-}
-
-function updateCounter() {
-  const total = listContainer.querySelectorAll("li").length;
-  const done = listContainer.querySelectorAll("li.checked").length;
-  counter.textContent = `Done: ${done} / Total: ${total}`;
-}
-
-function showToast(msg) {
-  const toast = document.getElementById("toast");
-  toast.textContent = msg;
-  toast.style.opacity = 1;
-  setTimeout(() => {
-    toast.style.opacity = 0;
-  }, 2000);
-}
-
+// Save / load
 function saveData() {
   localStorage.setItem("data", listContainer.innerHTML);
 }
 
-function showTask() {
+function loadData() {
   listContainer.innerHTML = localStorage.getItem("data") || "";
-  updateCounter();
 }
 
-function saveTheme() {
-  localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
+// Filter
+function applyFilter() {
+  const filter = filterSelect.value;
+  const tasks = listContainer.querySelectorAll("li");
+
+  tasks.forEach(task => {
+    const isChecked = task.classList.contains("checked");
+    if (filter === "done" && !isChecked) {
+      task.style.display = "none";
+    } else if (filter === "not-done" && isChecked) {
+      task.style.display = "none";
+    } else {
+      task.style.display = "";
+    }
+  });
 }
 
-function loadTheme() {
-  if (localStorage.getItem("theme") === "dark") {
-    document.body.classList.add("dark");
-  }
+// Deadline alert
+function markDeadlines() {
+  const now = new Date();
+  listContainer.querySelectorAll("li").forEach(task => {
+    task.classList.remove("overdue", "soon");
+    const deadlineSpan = task.querySelector(".deadline-date");
+    if (!deadlineSpan) return;
+
+    const deadline = new Date(deadlineSpan.textContent.replace("Deadline: ", ""));
+    const diffHours = (deadline - now) / (1000 * 60 * 60);
+
+    if (diffHours < 0) {
+      task.classList.add("overdue");
+    } else if (diffHours <= 24) {
+      task.classList.add("soon");
+    }
+  });
 }
 
-document.getElementById("toggle-theme").addEventListener("click", () => {
-  document.body.classList.toggle("dark");
-  saveTheme();
+// Dark mode toggle
+darkToggle.addEventListener("change", () => {
+  document.body.classList.toggle("dark", darkToggle.checked);
+  localStorage.setItem("darkMode", darkToggle.checked);
 });
 
-showTask();
-loadTheme();
+function loadDarkMode() {
+  const dark = localStorage.getItem("darkMode") === "true";
+  document.body.classList.toggle("dark", dark);
+  darkToggle.checked = dark;
+}
+
+// Init
+function init() {
+  loadDarkMode();
+  loadData();
+  applyFilter();
+  markDeadlines();
+}
+
+init();
