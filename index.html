@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>To-Do List App</title>
   <link rel="stylesheet" href="style.css">
@@ -9,27 +8,30 @@
 <body>
   <div class="container">
     <div class="todo-app">
-      <button id="toggle-theme">🌙</button>
       <h2>To-Do List <img src="images/todolist-icon.svg" height="50px" /></h2>
 
+      <div class="top-controls">
+        <label class="switch">
+          <input type="checkbox" id="darkModeToggle">
+          <span class="slider round"></span>
+        </label>
+        <select id="filter-tasks">
+          <option value="all">All</option>
+          <option value="done">Completed</option>
+          <option value="not-done">Pending</option>
+        </select>
+      </div>
+
       <div class="row">
-        <input type="text" id="input-box" placeholder="Add a task..." />
+        <input type="text" id="input-box" placeholder="Add your task">
+        <input type="date" id="deadline">
         <button onclick="addTask()">Add</button>
       </div>
 
-      <div id="filters">
-        <button onclick="filterTasks('all')">All</button>
-        <button onclick="filterTasks('done')">Done</button>
-        <button onclick="filterTasks('undone')">Undone</button>
-      </div>
-
-      <div id="counter"></div>
-
+      <button id="clear-all">Clear All</button>
       <ul id="list-container"></ul>
     </div>
   </div>
-
-  <div id="toast">Message</div>
   <script src="script.js"></script>
 </body>
 </html>
