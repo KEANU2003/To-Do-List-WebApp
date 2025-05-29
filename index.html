@@ -1,30 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>To-Do List App</title>
-    <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>To-Do List App</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <div class="todo-app">
-            <h2>
-                To-Do List
-                <img src="images/todolist-icon.svg" alt="To-Do Icon" height="50" />
-            </h2>
-            <div class="row">
-                <input
-                    type="text"
-                    id="input-box"
-                    placeholder="Add your task"
-                    aria-label="Add your task"
-                />
-                <button id="add-btn">Add</button>
-            </div>
-            <ul id="list-container" aria-live="polite"></ul>
-        </div>
+  <div class="container">
+    <div class="todo-app">
+      <button id="toggle-theme">🌙</button>
+      <h2>To-Do List <img src="images/todolist-icon.svg" height="50px" /></h2>
+
+      <div class="row">
+        <input type="text" id="input-box" placeholder="Add a task..." />
+        <button onclick="addTask()">Add</button>
+      </div>
+
+      <div id="filters">
+        <button onclick="filterTasks('all')">All</button>
+        <button onclick="filterTasks('done')">Done</button>
+        <button onclick="filterTasks('undone')">Undone</button>
+      </div>
+
+      <div id="counter"></div>
+
+      <ul id="list-container"></ul>
     </div>
-    <script src="script.js"></script>
+  </div>
+
+  <div id="toast">Message</div>
+  <script src="script.js"></script>
 </body>
 </html>
