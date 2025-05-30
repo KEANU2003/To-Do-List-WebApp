@@ -8,6 +8,8 @@
   --overdue-color: #ffe5e5;
   --soon-color: #fff3cd;
   --border-accent: #ff3b3b;
+
+  --animation-duration: 0.3s; /* سرعت انیمیشن قابل تنظیم */
 }
 
 /* Dark Mode */
@@ -148,11 +150,43 @@ ul li span {
   font-size: 22px;
   color: var(--checked-color);
   cursor: pointer;
+  user-select: none;
 }
 
 ul li span:hover {
   background: #ddd;
   border-radius: 50%;
+}
+
+/* Animation keyframes */
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOutShrink {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+.animate-in {
+  animation: fadeInSlide var(--animation-duration) ease-out forwards;
+}
+
+.animate-out {
+  animation: fadeOutShrink var(--animation-duration) ease-in forwards;
 }
 
 li .timestamp,
@@ -170,15 +204,6 @@ li.overdue {
 li.soon {
   background-color: var(--soon-color);
   border-left: 4px solid orange;
-}
-
-.fade-in {
-  animation: fadeIn 0.3s ease-in;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to   { opacity: 1; transform: translateY(0); }
 }
 
 /* Dark mode switch */
