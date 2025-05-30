@@ -5,7 +5,9 @@ const filterSelect = document.getElementById("filter-tasks");
 const darkToggle = document.getElementById("darkModeToggle");
 const clearAll = document.getElementById("clear-all");
 
-// Task creation
+let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+// Add a task with animation
 function addTask() {
   const taskText = inputBox.value.trim();
   const deadline = deadlineInput.value;
@@ -15,111 +17,157 @@ function addTask() {
     return;
   }
 
-  const li = document.createElement("li");
-  li.classList.add("fade-in");
+  const newTask = {
+    text: taskText,
+    deadline: deadline,
+    completed: false,
+    createdAt: new Date().toLocaleString(),
+  };
 
-  const now = new Date();
-  const timestamp = now.toLocaleString();
-
-  li.innerHTML = `
-    ${taskText}
-    <span class="timestamp">Created: ${timestamp}</span>
-    ${deadline ? `<span class="deadline-date">Deadline: ${deadline}</span>` : ""}
-  `;
-
-  const closeBtn = document.createElement("span");
-  closeBtn.innerHTML = "\u00d7";
-  li.appendChild(closeBtn);
-  listContainer.appendChild(li);
+  tasks.push(newTask);
+  saveTasks();
+  renderTasks();
 
   inputBox.value = "";
   deadlineInput.value = "";
-
-  saveData();
   applyFilter();
+  markDeadlines();
 }
 
-// Event listeners
-listContainer.addEventListener("click", (e) => {
-  if (e.target.tagName === "LI") {
-    e.target.classList.toggle("checked");
-    saveData();
-  } else if (e.target.tagName === "SPAN") {
-    e.target.parentElement.remove();
-    saveData();
-  }
-});
+// Render tasks from array to UI
+function renderTasks() {
+  listContainer.innerHTML = "";
 
-filterSelect.addEventListener("change", applyFilter);
+  tasks.forEach((task, index) => {
+    const li = document.createElement("li");
+    li.textContent = task.text;
 
-clearAll.addEventListener("click", () => {
-  if (confirm("Are you sure you want to clear all tasks?")) {
-    listContainer.innerHTML = "";
-    saveData();
-  }
-});
+    if (task.completed) li.classList.add("checked");
 
-// Save / load
-function saveData() {
-  localStorage.setItem("data", listContainer.innerHTML);
+    li.classList.add("animate-in"); // انیمیشن اضافه شدن تسک
+
+    // اضافه کردن اطلاعات زمان ایجاد و ددلاین
+    const createdSpan = document.createElement("span");
+    createdSpan.className = "timestamp";
+    createdSpan.textContent = `Created: ${task.createdAt}`;
+    li.appendChild(createdSpan);
+
+    if (task.deadline) {
+      const deadlineSpan = document.createElement("span");
+      deadlineSpan.className = "deadline-date";
+      deadlineSpan.textContent = `Deadline: ${task.deadline}`;
+      li.appendChild(deadlineSpan);
+    }
+
+    // Toggle complete on click
+    li.addEventListener("click", () => {
+      tasks[index].completed = !tasks[index].completed;
+      saveTasks();
+      renderTasks();
+      applyFilter();
+      markDeadlines();
+    });
+
+    // Delete button
+    const closeBtn = document.createElement("span");
+    closeBtn.innerHTML = "\u00d7";
+    closeBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      // انیمیشن حذف
+      li.classList.add("animate-out");
+
+      // حذف بعد از پایان انیمیشن
+      li.addEventListener("animationend", () => {
+        tasks.splice(index, 1);
+        saveTasks();
+        renderTasks();
+        applyFilter();
+        markDeadlines();
+      }, { once: true });
+    });
+
+    li.appendChild(closeBtn);
+    listContainer.appendChild(li);
+  });
 }
 
-function loadData() {
-  listContainer.innerHTML = localStorage.getItem("data") || "";
-}
-
-// Filter
+// فیلتر تسک‌ها
 function applyFilter() {
   const filter = filterSelect.value;
-  const tasks = listContainer.querySelectorAll("li");
+  const lis = listContainer.querySelectorAll("li");
 
-  tasks.forEach(task => {
-    const isChecked = task.classList.contains("checked");
+  lis.forEach(li => {
+    const isChecked = li.classList.contains("checked");
     if (filter === "done" && !isChecked) {
-      task.style.display = "none";
+      li.style.display = "none";
     } else if (filter === "not-done" && isChecked) {
-      task.style.display = "none";
+      li.style.display = "none";
     } else {
-      task.style.display = "";
+      li.style.display = "";
     }
   });
 }
 
-// Deadline alert
+// علامت‌گذاری تسک‌های نزدیک یا گذشته ددلاین
 function markDeadlines() {
   const now = new Date();
-  listContainer.querySelectorAll("li").forEach(task => {
-    task.classList.remove("overdue", "soon");
-    const deadlineSpan = task.querySelector(".deadline-date");
+  listContainer.querySelectorAll("li").forEach(li => {
+    li.classList.remove("overdue", "soon");
+    const deadlineSpan = li.querySelector(".deadline-date");
     if (!deadlineSpan) return;
 
     const deadline = new Date(deadlineSpan.textContent.replace("Deadline: ", ""));
     const diffHours = (deadline - now) / (1000 * 60 * 60);
 
     if (diffHours < 0) {
-      task.classList.add("overdue");
+      li.classList.add("overdue");
     } else if (diffHours <= 24) {
-      task.classList.add("soon");
+      li.classList.add("soon");
     }
   });
 }
 
-// Dark mode toggle
-darkToggle.addEventListener("change", () => {
-  document.body.classList.toggle("dark", darkToggle.checked);
-  localStorage.setItem("darkMode", darkToggle.checked);
-});
+// ذخیره تسک‌ها در localStorage
+function saveTasks() {
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+}
 
+// بارگذاری حالت دارک مود از localStorage
 function loadDarkMode() {
   const dark = localStorage.getItem("darkMode") === "true";
   document.body.classList.toggle("dark", dark);
   darkToggle.checked = dark;
 }
 
-// Init
+// ذخیره حالت دارک مود در localStorage
+darkToggle.addEventListener("change", () => {
+  document.body.classList.toggle("dark", darkToggle.checked);
+  localStorage.setItem("darkMode", darkToggle.checked);
+});
+
+// فیلتر تسک‌ها هنگام تغییر
+filterSelect.addEventListener("change", applyFilter);
+
+// پاک کردن همه تسک‌ها با تایید
+clearAll.addEventListener("click", () => {
+  if (confirm("Are you sure you want to clear all tasks?")) {
+    tasks = [];
+    saveTasks();
+    renderTasks();
+  }
+});
+
+// دکمه اینتر در input
+inputBox.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") {
+    addTask();
+  }
+});
+
+// مقداردهی اولیه برنامه
 function init() {
   loadDarkMode();
-  loadData();
+  renderTasks();
   applyFilter();
   markDeadlines();
 }
