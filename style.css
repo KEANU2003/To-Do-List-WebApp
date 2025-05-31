@@ -253,3 +253,45 @@ input:checked + .slider:before {
   align-items: center;
   margin-bottom: 15px;
 }
+
+/* آیکن Edit کنار هر آیتم */
+.edit-btn {
+  position: absolute;
+  right: 40px;
+  top: 10px;
+  font-size: 18px;
+  color: var(--accent-color);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.edit-btn:hover {
+  color: #333;
+}
+
+/* فرم ویرایش */
+.edit-mode input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-bottom: 8px;
+}
+
+.edit-mode .save-btn {
+  padding: 6px 12px;
+  background-color: var(--accent-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+.edit-mode .save-btn:hover {
+  background-color: #e24c3c;
+}
