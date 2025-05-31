@@ -164,6 +164,46 @@ inputBox.addEventListener("keypress", (e) => {
   }
 });
 
+let editingIndex = null; // فقط یک آیتم در حال ویرایش
+
+function renderTasks() {
+  listContainer.innerHTML = "";
+
+  tasks.forEach((task, index) => {
+    const li = document.createElement("li");
+    
+    if (index === editingIndex) {
+      li.classList.add("edit-mode");
+
+      const input = document.createElement("input");
+      input.type = "text";
+      input.value = task.text;
+      input.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") saveEdit(index, input.value);
+      });
+
+      const saveBtn = document.createElement("button");
+      saveBtn.textContent = "Save";
+      saveBtn.className = "save-btn";
+      saveBtn.addEventListener("click", () => saveEdit(index, input.value));
+
+      li.appendChild(input);
+      li.appendChild(saveBtn);
+    } else {
+      li.textContent = task.text;
+
+      if (task.completed) li.classList.add("checked");
+
+      // آیکن Edit
+      const editBtn = document.createElement("button");
+      editBtn.textContent = "✏️";
+      editBtn.className = "edit-btn";
+      editBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        editingIndex = index;
+        renderTasks();
+      });
+
 // مقداردهی اولیه برنامه
 function init() {
   loadDarkMode();
@@ -173,3 +213,4 @@ function init() {
 }
 
 init();
+
