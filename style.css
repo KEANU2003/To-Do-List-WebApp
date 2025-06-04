@@ -115,7 +115,7 @@ ul {
 ul li {
   background: var(--task-bg);
   margin: 10px 0;
-  padding: 12px 40px 12px 50px;
+  padding: 20px 40px 12px 50px;
   border-radius: 10px;
   position: relative;
   transition: 0.3s;
@@ -254,6 +254,7 @@ input:checked + .slider:before {
   margin-bottom: 15px;
 }
 
+
 /* آیکن Edit کنار هر آیتم */
 .edit-btn {
   position: absolute;
@@ -294,4 +295,25 @@ input:checked + .slider:before {
 
 .edit-mode .save-btn:hover {
   background-color: #e24c3c;
+}
+
+.search-container {
+  margin: 20px 0;
+  text-align: center;
+}
+
+#search-box {
+  width: 80%;
+  max-width: 400px;
+  padding: 10px 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+#search-box:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
