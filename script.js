@@ -4,6 +4,7 @@ const listContainer = document.getElementById("list-container");
 const filterSelect = document.getElementById("filter-tasks");
 const darkToggle = document.getElementById("darkModeToggle");
 const clearAll = document.getElementById("clear-all");
+const searchBox = document.getElementById("search-box");
 
 let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 
@@ -94,17 +95,21 @@ function renderTasks() {
 // فیلتر تسک‌ها
 function applyFilter() {
   const filter = filterSelect.value;
-  const lis = listContainer.querySelectorAll("li");
+  const query = searchBox.value.toLowerCase();
+  const tasks = listContainer.querySelectorAll("li");
+  tasks.forEach(task => {
+    const isChecked = task.classList.contains("checked");
+    const text = task.textContent.toLowerCase();
+    let show = true;
 
-  lis.forEach(li => {
-    const isChecked = li.classList.contains("checked");
-    if (filter === "done" && !isChecked) {
-      li.style.display = "none";
-    } else if (filter === "not-done" && isChecked) {
-      li.style.display = "none";
-    } else {
-      li.style.display = "";
-    }
+    // فیلتر انجام‌شده / انجام‌نشده
+    if (filter === "done" && !isChecked) show = false;
+    else if (filter === "not-done" && isChecked) show = false;
+
+    // فیلتر جستجو
+    if (!text.includes(query)) show = false;
+
+    task.style.display = show ? "" : "none";
   });
 }
 
@@ -204,6 +209,82 @@ function renderTasks() {
         renderTasks();
       });
 
+      // دکمه حذف
+      const closeBtn = document.createElement("span");
+      closeBtn.innerHTML = "\u00d7";
+      closeBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        li.classList.add("animate-out");
+        li.addEventListener("animationend", () => {
+          tasks.splice(index, 1);
+          if (editingIndex === index) editingIndex = null;
+          saveTasks();
+          renderTasks();
+          applyFilter();
+          markDeadlines();
+        }, { once: true });
+      });
+
+      // تکمیل تسک
+      li.addEventListener("click", () => {
+        if (editingIndex !== null) return;
+        tasks[index].completed = !tasks[index].completed;
+        saveTasks();
+        renderTasks();
+        applyFilter();
+        markDeadlines();
+      });
+
+      // اضافه کردن به li
+      li.appendChild(editBtn);
+      li.appendChild(closeBtn);
+    }
+
+    // زمان و ددلاین
+    const createdSpan = document.createElement("span");
+    createdSpan.className = "timestamp";
+    createdSpan.textContent = `Created: ${task.createdAt}`;
+    li.appendChild(createdSpan);
+
+    if (task.deadline) {
+      const deadlineSpan = document.createElement("span");
+      deadlineSpan.className = "deadline-date";
+      deadlineSpan.textContent = `Deadline: ${task.deadline}`;
+      li.appendChild(deadlineSpan);
+    }
+
+    listContainer.appendChild(li);
+  });
+}
+
+searchBox.addEventListener("input", applyFilter);
+filterSelect.addEventListener("change", applyFilter);
+searchBox.addEventListener("input", () => {
+  const query = searchBox.value.toLowerCase();
+  const tasks = listContainer.querySelectorAll("li");
+
+  tasks.forEach(task => {
+    const text = task.textContent.toLowerCase();
+    if (text.includes(query)) {
+      task.style.display = "";
+    } else {
+      task.style.display = "none";
+    }
+  });
+});
+
+// ذخیره ویرایش
+function saveEdit(index, newText) {
+  if (newText.trim() === "") return alert("Task cannot be empty.");
+  tasks[index].text = newText.trim();
+  editingIndex = null;
+  saveTasks();
+  renderTasks();
+  applyFilter();
+  markDeadlines();
+}
+
+
 // مقداردهی اولیه برنامه
 function init() {
   loadDarkMode();
@@ -213,4 +294,3 @@ function init() {
 }
 
 init();
-
