@@ -1,296 +1,217 @@
 const inputBox = document.getElementById("input-box");
-const deadlineInput = document.getElementById("deadline");
 const listContainer = document.getElementById("list-container");
-const filterSelect = document.getElementById("filter-tasks");
-const darkToggle = document.getElementById("darkModeToggle");
-const clearAll = document.getElementById("clear-all");
-const searchBox = document.getElementById("search-box");
 
-let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+function addTask(){
+    if(inputBox.value === ''){
+        alert("You must write something!")
+    }
+    else{
+        let li = document.createElement("li");
+        li.classList.add("inprogress"); // اضافه کردن کلاس inprogress برای فیلتر وضعیت
+        li.innerHTML = inputBox.value;
+        listContainer.appendChild(li);
 
-// Add a task with animation
-function addTask() {
-  const taskText = inputBox.value.trim();
-  const deadline = deadlineInput.value;
+        let edit = document.createElement("span");
+        edit.className = "edit-icon";
+        edit.innerHTML = "&#9998;"; // ✏️
+        edit.onclick = function(e) {
+        e.stopPropagation(); // جلوگیری از تغییر وضعیت تسک وقتی کلیک میکنیم
+        editTask(li);
+        };
+        li.appendChild(edit);
+        let span = document.createElement("span");
+        span.innerHTML = "\u00d7";
+        li.appendChild(span);
 
-  if (taskText === "") {
-    alert("Please enter a task!");
-    return;
-  }
-
-  const newTask = {
-    text: taskText,
-    deadline: deadline,
-    completed: false,
-    createdAt: new Date().toLocaleString(),
-  };
-
-  tasks.push(newTask);
-  saveTasks();
-  renderTasks();
-
-  inputBox.value = "";
-  deadlineInput.value = "";
-  applyFilter();
-  markDeadlines();
+    }
+    inputBox.value = "";
+    saveData();
+    updateProgressBar();
 }
 
-// Render tasks from array to UI
-function renderTasks() {
-  listContainer.innerHTML = "";
-
-  tasks.forEach((task, index) => {
-    const li = document.createElement("li");
-    li.textContent = task.text;
-
-    if (task.completed) li.classList.add("checked");
-
-    li.classList.add("animate-in"); // انیمیشن اضافه شدن تسک
-
-    // اضافه کردن اطلاعات زمان ایجاد و ددلاین
-    const createdSpan = document.createElement("span");
-    createdSpan.className = "timestamp";
-    createdSpan.textContent = `Created: ${task.createdAt}`;
-    li.appendChild(createdSpan);
-
-    if (task.deadline) {
-      const deadlineSpan = document.createElement("span");
-      deadlineSpan.className = "deadline-date";
-      deadlineSpan.textContent = `Deadline: ${task.deadline}`;
-      li.appendChild(deadlineSpan);
+listContainer.addEventListener("click", function(e){
+    if(e.target.tagName === "LI"){
+        e.target.classList.toggle("checked");
+        saveData();
     }
+    else if(e.target.tagName === "SPAN"){
+        e.target.parentElement.remove();
+        saveData();
+        updateProgressBar();
+    }
+}, false);
 
-    // Toggle complete on click
-    li.addEventListener("click", () => {
-      tasks[index].completed = !tasks[index].completed;
-      saveTasks();
-      renderTasks();
-      applyFilter();
-      markDeadlines();
+function updateProgressBar() {
+    const tasks = listContainer.getElementsByTagName("li");
+    let total = tasks.length;
+    let completed = 0;
+
+    Array.from(tasks).forEach(task => {
+        if (task.classList.contains("checked")) {
+            completed++;
+        }
     });
 
-    // Delete button
-    const closeBtn = document.createElement("span");
-    closeBtn.innerHTML = "\u00d7";
-    closeBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      // انیمیشن حذف
-      li.classList.add("animate-out");
+    const progress = total === 0 ? 0 : Math.round((completed / total) * 100);
+    const progressBar = document.getElementById("progress-bar");
+    progressBar.style.width = progress + "%";
+    progressBar.innerText = progress + "%";
+}
 
-      // حذف بعد از پایان انیمیشن
-      li.addEventListener("animationend", () => {
-        tasks.splice(index, 1);
-        saveTasks();
-        renderTasks();
-        applyFilter();
-        markDeadlines();
-      }, { once: true });
+function saveData(){
+    localStorage.setItem("data", listContainer.innerHTML);
+}
+function showTask(){
+    listContainer.innerHTML = localStorage.getItem("data");
+}
+showTask();
+
+document.getElementById("search-box").addEventListener("input", function () {
+    const searchTerm = this.value.toLowerCase();
+    const tasks = listContainer.getElementsByTagName("li");
+
+    Array.from(tasks).forEach(task => {
+        const text = task.textContent || task.innerText;
+        if (text.toLowerCase().indexOf(searchTerm) > -1) {
+            task.style.display = "";
+        } else {
+            task.style.display = "none";
+        }
     });
+});
 
-    li.appendChild(closeBtn);
-    listContainer.appendChild(li);
-  });
-}
-
-// فیلتر تسک‌ها
-function applyFilter() {
-  const filter = filterSelect.value;
-  const query = searchBox.value.toLowerCase();
-  const tasks = listContainer.querySelectorAll("li");
-  tasks.forEach(task => {
-    const isChecked = task.classList.contains("checked");
-    const text = task.textContent.toLowerCase();
-    let show = true;
-
-    // فیلتر انجام‌شده / انجام‌نشده
-    if (filter === "done" && !isChecked) show = false;
-    else if (filter === "not-done" && isChecked) show = false;
-
-    // فیلتر جستجو
-    if (!text.includes(query)) show = false;
-
-    task.style.display = show ? "" : "none";
-  });
-}
-
-// علامت‌گذاری تسک‌های نزدیک یا گذشته ددلاین
-function markDeadlines() {
-  const now = new Date();
-  listContainer.querySelectorAll("li").forEach(li => {
-    li.classList.remove("overdue", "soon");
-    const deadlineSpan = li.querySelector(".deadline-date");
-    if (!deadlineSpan) return;
-
-    const deadline = new Date(deadlineSpan.textContent.replace("Deadline: ", ""));
-    const diffHours = (deadline - now) / (1000 * 60 * 60);
-
-    if (diffHours < 0) {
-      li.classList.add("overdue");
-    } else if (diffHours <= 24) {
-      li.classList.add("soon");
+function deleteAllTasks() {
+    if (confirm("Are you sure you want to delete all tasks?")) {
+        listContainer.innerHTML = "";
+        localStorage.removeItem("data");
+        updateProgressBar();
     }
-  });
 }
 
-// ذخیره تسک‌ها در localStorage
-function saveTasks() {
-  localStorage.setItem("tasks", JSON.stringify(tasks));
-}
+document.getElementById("status-filter").addEventListener("change", function () {
+    const filterValue = this.value.toLowerCase();
+    const tasks = listContainer.getElementsByTagName("li");
 
-// بارگذاری حالت دارک مود از localStorage
-function loadDarkMode() {
-  const dark = localStorage.getItem("darkMode") === "true";
-  document.body.classList.toggle("dark", dark);
-  darkToggle.checked = dark;
-}
+    Array.from(tasks).forEach(task => {
+        // اگر تسک چک شده باشه، completed هست
+        const isCompleted = task.classList.contains("checked");
+        let showTask = true;
 
-// ذخیره حالت دارک مود در localStorage
-darkToggle.addEventListener("change", () => {
-  document.body.classList.toggle("dark", darkToggle.checked);
-  localStorage.setItem("darkMode", darkToggle.checked);
+        if (filterValue === "completed") {
+            showTask = isCompleted;
+        } else if (filterValue === "uncompleted") {
+            showTask = !isCompleted;
+        } else if (filterValue === "inprogress") {
+            showTask = !isCompleted && !task.classList.contains("inprogress") ? false : true;
+        }
+
+        task.style.display = showTask ? "" : "none";
+    });
 });
 
-// فیلتر تسک‌ها هنگام تغییر
-filterSelect.addEventListener("change", applyFilter);
+window.onload = function () {
+    showTask();
+    updateProgressBar();
+};
 
-// پاک کردن همه تسک‌ها با تایید
-clearAll.addEventListener("click", () => {
-  if (confirm("Are you sure you want to clear all tasks?")) {
-    tasks = [];
-    saveTasks();
-    renderTasks();
-  }
-});
-
-// دکمه اینتر در input
-inputBox.addEventListener("keypress", (e) => {
-  if (e.key === "Enter") {
-    addTask();
-  }
-});
-
-let editingIndex = null; // فقط یک آیتم در حال ویرایش
-
-function renderTasks() {
-  listContainer.innerHTML = "";
-
-  tasks.forEach((task, index) => {
-    const li = document.createElement("li");
+function editTask(taskElement) {
+    const oldText = taskElement.innerText;
     
-    if (index === editingIndex) {
-      li.classList.add("edit-mode");
+    // ساخت input برای ویرایش
+    const input = document.createElement("input");
+    input.type = "text";
+    input.value = oldText;
+    input.style.width = "100%";
+    input.style.padding = "10px";
+    input.style.marginTop = "5px";
+    input.style.border = "1px solid #ccc";
+    input.style.borderRadius = "5px";
 
-      const input = document.createElement("input");
-      input.type = "text";
-      input.value = task.text;
-      input.addEventListener("keypress", (e) => {
-        if (e.key === "Enter") saveEdit(index, input.value);
-      });
+    // جایگزین کردن متن با input
+    taskElement.innerHTML = "";
+    taskElement.appendChild(input);
+    input.focus();
 
-      const saveBtn = document.createElement("button");
-      saveBtn.textContent = "Save";
-      saveBtn.className = "save-btn";
-      saveBtn.addEventListener("click", () => saveEdit(index, input.value));
+    // ذخیره تغییرات وقتی Enter زده شد
+    input.addEventListener("keydown", function(e) {
+        if (e.key === "Enter") {
+            const newText = input.value.trim();
+            if (newText !== "") {
+                taskElement.innerHTML = newText;
+                // دوباره ایکون‌ها رو اضافه کن
+                addIcons(taskElement);
+                saveData();
+                updateProgressBar(); // اگر Progress Bar داری
+            } else {
+                taskElement.innerHTML = oldText;
+                addIcons(taskElement);
+            }
+        }
+    });
 
-      li.appendChild(input);
-      li.appendChild(saveBtn);
-    } else {
-      li.textContent = task.text;
-
-      if (task.completed) li.classList.add("checked");
-
-      // آیکن Edit
-      const editBtn = document.createElement("button");
-      editBtn.textContent = "✏️";
-      editBtn.className = "edit-btn";
-      editBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        editingIndex = index;
-        renderTasks();
-      });
-
-      // دکمه حذف
-      const closeBtn = document.createElement("span");
-      closeBtn.innerHTML = "\u00d7";
-      closeBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        li.classList.add("animate-out");
-        li.addEventListener("animationend", () => {
-          tasks.splice(index, 1);
-          if (editingIndex === index) editingIndex = null;
-          saveTasks();
-          renderTasks();
-          applyFilter();
-          markDeadlines();
-        }, { once: true });
-      });
-
-      // تکمیل تسک
-      li.addEventListener("click", () => {
-        if (editingIndex !== null) return;
-        tasks[index].completed = !tasks[index].completed;
-        saveTasks();
-        renderTasks();
-        applyFilter();
-        markDeadlines();
-      });
-
-      // اضافه کردن به li
-      li.appendChild(editBtn);
-      li.appendChild(closeBtn);
-    }
-
-    // زمان و ددلاین
-    const createdSpan = document.createElement("span");
-    createdSpan.className = "timestamp";
-    createdSpan.textContent = `Created: ${task.createdAt}`;
-    li.appendChild(createdSpan);
-
-    if (task.deadline) {
-      const deadlineSpan = document.createElement("span");
-      deadlineSpan.className = "deadline-date";
-      deadlineSpan.textContent = `Deadline: ${task.deadline}`;
-      li.appendChild(deadlineSpan);
-    }
-
-    listContainer.appendChild(li);
-  });
+    // ذخیره وقتی از input خارج شد
+    input.addEventListener("blur", function() {
+        const newText = input.value.trim();
+        if (newText !== "") {
+            taskElement.innerHTML = newText;
+            addIcons(taskElement);
+            saveData();
+            updateProgressBar(); // اگر Progress Bar داری
+        } else {
+            taskElement.innerHTML = oldText;
+            addIcons(taskElement);
+        }
+    });
 }
 
-searchBox.addEventListener("input", applyFilter);
-filterSelect.addEventListener("change", applyFilter);
-searchBox.addEventListener("input", () => {
-  const query = searchBox.value.toLowerCase();
-  const tasks = listContainer.querySelectorAll("li");
+function addIcons(taskElement) {
+    const span = document.createElement("span");
+    span.innerHTML = "\u00d7";
+    span.onclick = function(e) {
+        e.stopPropagation();
+        this.parentElement.remove();
+        saveData();
+        updateProgressBar(); // اگر Progress Bar داری
+    };
+     taskElement.appendChild(span);
 
-  tasks.forEach(task => {
-    const text = task.textContent.toLowerCase();
-    if (text.includes(query)) {
-      task.style.display = "";
+    const edit = document.createElement("span");
+    edit.className = "edit-icon";
+    edit.innerHTML = "&#9998;";
+    edit.onclick = function(e) {
+        e.stopPropagation();
+        editTask(taskElement);
+    };
+    taskElement.appendChild(edit);
+}
+
+const themeToggle = document.getElementById("theme-toggle");
+
+themeToggle.addEventListener("click", function () {
+    document.body.classList.toggle("dark-mode");
+
+    // تغییر متن دکمه
+    if (document.body.classList.contains("dark-mode")) {
+        themeToggle.textContent = "☀️ Light Mode";
     } else {
-      task.style.display = "none";
+        themeToggle.textContent = "🌙 Dark Mode";
     }
-  });
+
+    // ذخیره حالت تم در لوکال استوریج
+    localStorage.setItem("theme", document.body.classList.contains("dark-mode") ? "dark" : "light");
 });
 
-// ذخیره ویرایش
-function saveEdit(index, newText) {
-  if (newText.trim() === "") return alert("Task cannot be empty.");
-  tasks[index].text = newText.trim();
-  editingIndex = null;
-  saveTasks();
-  renderTasks();
-  applyFilter();
-  markDeadlines();
-}
+// بارگذاری حالت ذخیره شده وقتی صفحه لود میشه
+window.onload = function () {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "dark") {
+        document.body.classList.add("dark-mode");
+        themeToggle.textContent = "☀️ Light Mode";
+    } else {
+        document.body.classList.remove("dark-mode");
+        themeToggle.textContent = "🌙 Dark Mode";
+    }
 
-
-// مقداردهی اولیه برنامه
-function init() {
-  loadDarkMode();
-  renderTasks();
-  applyFilter();
-  markDeadlines();
-}
-
-init();
+    showTask();
+    updateProgressBar(); // فقط اگر داری
+};
