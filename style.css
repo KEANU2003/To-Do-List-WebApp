@@ -1,305 +1,134 @@
-/* Default Light Theme */
-:root {
-  --bg-color: #fff;
-  --text-color: #002765;
-  --accent-color: #ff5945;
-  --task-bg: #edeef0;
-  --checked-color: #555;
-  --overdue-color: #ffe5e5;
-  --soon-color: #fff3cd;
-  --border-accent: #ff3b3b;
-
-  --animation-duration: 0.3s; /* سرعت انیمیشن قابل تنظیم */
-}
-
-/* Dark Mode */
-body.dark {
-  --bg-color: #1e1e1e;
-  --text-color: #ffffff;
-  --accent-color: #ff8759;
-  --task-bg: #2e2e2e;
-  --checked-color: #aaa;
-  --overdue-color: #3a1c1c;
-  --soon-color: #4d3f1c;
-  --border-accent: #ff7070;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  font-family: 'Poppins', sans-serif;
-  box-sizing: border-box;
+*{
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    box-sizing: border-box;
 }
 
 body {
-  background: linear-gradient(135deg, #153677, #4e085f);
-  color: var(--text-color);
+    background: linear-gradient(135deg, #153677, #4e085f);
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+    line-height: 1.6;
 }
 
-.container {
-  width: 100%;
-  min-height: 100vh;
-  padding: 10px;
+.container{
+    width: 100%;
+    background: linear-gradient(135deg, #153677, #4e085f);
+    padding: 20px;
+}  
+
+.todo-app{
+    width: 100%;
+    max-width: 540px;
+    background: #fff;
+    margin: 100px auto 20px;
+    padding: 40px 30px 70px;
+    border-radius: 10px;
 }
 
-.todo-app {
-  width: 100%;
-  max-width: 540px;
-  background: var(--bg-color);
-  margin: 100px auto 20px;
-  padding: 40px 30px 70px;
-  border-radius: 10px;
+.todo-app h2{
+    color: #000000;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
-.todo-app h2 {
-  display: flex;
-  align-items: center;
-  margin-bottom: 20px;
-  color: var(--text-color);
+.todo-app h2 img{
+    width: 30px;
+    margin-left: 10px;
 }
 
 .row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: var(--task-bg);
-  border-radius: 30px;
-  padding-left: 20px;
-  margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #edeef0;
+    border-radius: 0px;
+    padding-left: 20px;
+    margin-bottom: 25px;
+    display: flex;
 }
 
-.row input[type="text"],
-.row input[type="date"] {
-  flex: 1;
-  border: none;
-  outline: none;
-  background: transparent;
-  padding: 10px;
-  font-size: 14px;
-  color: var(--text-color);
+input{
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    padding: 10px;
+    font-weight: 14px;
+    display: flex;
+}
+
+#input-box {
+    border-radius: 0 !important;
 }
 
 button {
-  border: none;
-  outline: none;
-  padding: 16px 30px;
-  background: var(--accent-color);
-  color: #fff;
-  font-size: 16px;
-  cursor: pointer;
-  border-radius: 40px;
+    border: none;
+    outline: none;
+    padding: 16px 50px;
+    background: #ff5945;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 0px;
 }
 
-#clear-all {
-  display: block;
-  margin: 10px auto 20px;
-  background-color: #777;
-  padding: 10px 20px;
-  color: white;
-  border: none;
-  border-radius: 30px;
-  cursor: pointer;
+ul li{
+    list-style: none;
+    font-size: 17px;
+    padding: 12px 8px 12px 50px;
+    user-select: none;
+    cursor: pointer;
+    position: relative;
 }
 
-#clear-all:hover {
-  background-color: #555;
+ul li::before{
+    content: '';
+    position: absolute;
+    height: 28px;
+    width: 28px;
+    border-radius: 50%;
+    background-image: url(images/unchecked.png);
+    background-size: cover;
+    background-position: center;
+    top: 8px;
+    left: 8px;
 }
 
-ul {
-  list-style: none;
-  font-size: 17px;
-  padding: 0;
-  user-select: none;
+ul li.checked{
+    color: #555;
+    text-decoration: line-through;
 }
 
-ul li {
-  background: var(--task-bg);
-  margin: 10px 0;
-  padding: 20px 40px 12px 50px;
-  border-radius: 10px;
-  position: relative;
-  transition: 0.3s;
+ul li.checked::before{
+    background-image: url(images/checked.png);
 }
 
-ul li::before {
-  content: '';
-  position: absolute;
-  height: 28px;
-  width: 28px;
-  border-radius: 50%;
-  background-image: url(images/unchecked-icon.png);
-  background-size: cover;
-  background-position: center;
-  top: 12px;
-  left: 10px;
+ul li span{
+    position: absolute;
+    right: 0;
+    top: 5px;
+    width: 40px;
+    height: 40px;
+    font-size: 22px;
+    color: #555;
+    line-height: 40px;
+    text-align: center;
+    border-radius: 50%;
 }
 
-ul li.checked {
-  color: var(--checked-color);
-  text-decoration: line-through;
-}
-
-ul li.checked::before {
-  background-image: url(images/checked-icon.png);
-}
-
-ul li span {
-  position: absolute;
-  right: 10px;
-  top: 10px;
-  font-size: 22px;
-  color: var(--checked-color);
-  cursor: pointer;
-  user-select: none;
-}
-
-ul li span:hover {
-  background: #ddd;
-  border-radius: 50%;
-}
-
-/* Animation keyframes */
-@keyframes fadeInSlide {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeOutShrink {
-  from {
-    opacity: 1;
-    transform: scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-}
-
-.animate-in {
-  animation: fadeInSlide var(--animation-duration) ease-out forwards;
-}
-
-.animate-out {
-  animation: fadeOutShrink var(--animation-duration) ease-in forwards;
-}
-
-li .timestamp,
-li .deadline-date {
-  display: block;
-  font-size: 12px;
-  color: #888;
-}
-
-li.overdue {
-  background-color: var(--overdue-color);
-  border-left: 4px solid var(--border-accent);
-}
-
-li.soon {
-  background-color: var(--soon-color);
-  border-left: 4px solid orange;
-}
-
-/* Dark mode switch */
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 50px;
-  height: 24px;
-}
-
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider {
-  position: absolute;
-  top: 0; left: 0;
-  right: 0; bottom: 0;
-  background-color: #ccc;
-  border-radius: 34px;
-  cursor: pointer;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 20px; width: 20px;
-  left: 2px; bottom: 2px;
-  background-color: white;
-  transition: .4s;
-  border-radius: 50%;
-}
-
-input:checked + .slider {
-  background-color: #2196f3;
-}
-
-input:checked + .slider:before {
-  transform: translateX(26px);
-}
-
-.top-controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-}
-
-
-/* آیکن Edit کنار هر آیتم */
-.edit-btn {
-  position: absolute;
-  right: 40px;
-  top: 10px;
-  font-size: 18px;
-  color: var(--accent-color);
-  background: none;
-  border: none;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.edit-btn:hover {
-  color: #333;
-}
-
-/* فرم ویرایش */
-.edit-mode input[type="text"] {
-  width: 100%;
-  padding: 10px;
-  font-size: 16px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  margin-bottom: 8px;
-}
-
-.edit-mode .save-btn {
-  padding: 6px 12px;
-  background-color: var(--accent-color);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  cursor: pointer;
-  margin-top: 4px;
-}
-
-.edit-mode .save-btn:hover {
-  background-color: #e24c3c;
+ ul li span:hover{
+    background: #edeef0;
 }
 
 .search-container {
   margin: 20px 0;
   text-align: center;
+  position: relative;
+  position: center;
+  display: flex;
 }
 
 #search-box {
@@ -309,11 +138,222 @@ input:checked + .slider:before {
   border: 1px solid #ccc;
   border-radius: 8px;
   font-size: 16px;
+  position: relative;
+  bottom: 8px;
   transition: all 0.3s ease;
+  display: flex;
 }
 
 #search-box:focus {
   outline: none;
   border-color: #007bff;
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.delete-all-btn {
+    display: block;
+    width: 40%;
+    max-width: 300px;
+    margin-top: auto;
+    padding: 12px 0;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 0px;
+    font-size: 16px;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.delete-all-button:hover {
+    background-color: #c0392b;
+}
+
+.button-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.button-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.delete-all-btn {
+    display: block;
+    width: 40%;
+    max-width: 300px;
+    margin: auto;
+    text-align: center;
+}
+
+#status-filter {
+    border: 1px solid #ccc;
+    outline: none;
+    background: transparent;
+    padding: 10px;
+    font-size: 16px;
+    appearance: none;
+    -webkit-appearance: none;
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 14px;
+    cursor: pointer;
+    padding-right: 30px;
+    width: auto;
+    max-width: 200px;
+    color: #727171;
+}
+
+/* استایل پیش‌فرض گزینه‌ها */
+#status-filter option {
+    font-size: 16px;
+    padding: 10px;
+    background-color: #fff;
+    color: #333;
+}
+
+.progress-container {
+    background-color: #e0e0e0;
+    border-radius: 30px;
+    overflow: hidden;
+    height: 25px;
+    margin-bottom: 20px;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background-color: #4caf50; /* رنگ سبز */
+    transition: width 0.4s ease-in-out;
+    text-align: right;
+    padding-right: 10px;
+    box-sizing: border-box;
+    color: white;
+    font-size: 14px;
+    line-height: 25px;
+}
+
+ul li .edit-icon {
+    position: absolute;
+    right: 45px; /* کمی قبل از ضربدر */
+    top: 10px;
+    width: 30px;
+    height: 30px;
+    font-size: 18px;
+    color: #333;
+    line-height: 30px;
+    text-align: center;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+ul li .edit-icon:hover {
+    background: #edeef0;
+}
+
+li .task-text {
+    flex-grow: 1;
+    display: block;
+    width: 50%;
+    height: 200%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-right: 300px;
+}
+
+
+li .delete-icon {
+    right: 10px;
+}
+
+li .edit-icon {
+    right: 45px;
+}
+
+li .edit-icon:hover,
+li .delete-icon:hover {
+    background: #edeef0;
+}
+
+.theme-btn {
+    position: relative;
+    left: 320px;
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #f8f9fa;
+    color: #333;
+    border: 1px solid #ccc;
+    border-radius: 0px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.dark-mode .todo-app h2{
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.theme-btn:hover {
+    background-color: #e9ecef;
+}
+
+/* استایل حالت تاریک */
+.dark-mode {
+    background-color: #121212;
+    color: #fff;
+}
+
+.dark-mode .todo-app {
+    background-color: #1e1e2f;
+    color: #fff;
+}
+
+.dark-mode input,
+.dark-mode select,
+.dark-mode button,
+.dark-mode .row {
+    background-color: #2c2c2c;
+    color: #fff;
+    border-color: #444;
+}
+
+.dark-mode ul li::before {
+    background-image: url('images/unchecked-dark.png') !important;
+}
+
+.dark-mode ul li.checked::before {
+    background-image: url('images/checked-dark.png') !important;
+}
+
+.dark-mode .progress-container {
+    background-color: #333;
+}
+
+.dark-mode .progress-bar {
+    background-color: #66bb6a;
+}
+
+@media (max-width: 600px) {
+    .todo-app {
+        padding: 20px 15px;
+    }
+
+    .row {
+        flex-direction: column;
+    }
+
+    button {
+        width: 100%;
+        margin-top: 10px;
+    }
 }
