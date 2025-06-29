@@ -1,6 +1,7 @@
 const inputBox = document.getElementById('input-box');
 const listContainer = document.getElementById('list-container');
 const addButton = document.querySelector('.add-btn');
+const deleteAllTaskButton = document.querySelector('.delete-all-btn');
 
 inputBox.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') {
@@ -93,13 +94,23 @@ document.getElementById('search-box').addEventListener('input', function () {
   });
 });
 
-function deleteAllTasks() {
-  if (confirm('Are you sure you want to delete all tasks?')) {
-    listContainer.innerHTML = '';
-    localStorage.removeItem('data');
-    updateProgressBar();
-  }
-}
+deleteAllTaskButton.addEventListener('click', () => {
+  Swal.fire({
+    title: 'Delete all task',
+    text: 'Are you sure you want to delete all task?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: 'rgb(55, 204, 49)',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      listContainer.textContent = '';
+      localStorage.removeItem('data');
+      updateProgressBar();
+    }
+  });
+});
 
 document.getElementById('status-filter').addEventListener('change', function () {
   const filterValue = this.value.toLowerCase();
