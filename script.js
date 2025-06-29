@@ -1,5 +1,6 @@
 const inputBox = document.getElementById('input-box');
 const listContainer = document.getElementById('list-container');
+const addButton = document.querySelector('.add-btn');
 
 inputBox.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') {
@@ -9,8 +10,12 @@ inputBox.addEventListener('keydown', (e) => {
 });
 
 function addTask() {
-  if (inputBox.value === '') {
-    alert('You must write something!');
+  if (inputBox.value.trim() === '') {
+    Swal.fire({
+      text: 'You must write something!',
+      icon: 'warning',
+      timer: 1500,
+    });
   } else {
     let li = document.createElement('li');
     li.classList.add('inprogress'); // اضافه کردن کلاس inprogress برای فیلتر وضعیت
