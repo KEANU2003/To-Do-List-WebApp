@@ -58,7 +58,7 @@ To-Do-List-WebApp/
 ```
 
 ## ⚖️ لایسنس
-[MIT License](LICENSE)
+[MIT License](https://github.com/KEANU2003/To-Do-List-WebApp/blob/6d7aa5fdd266d6b95695da4b8b7d9d277ca8aa29/LICENSE)
 
 ---
 🤝 ارتباط با من
