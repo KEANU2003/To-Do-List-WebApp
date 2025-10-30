@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern To-Do List</title>
+    <link rel="icon" href="/assets/icon-YLhZsbNZ.svg" type="image/svg+xml">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script type="module" crossorigin src="/assets/index-Dphv-ps8.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-CAJRCze6.css">
+</head>
+<body>
+    <div class="container">
+        <div id="auth-container">
+            <div class="auth-header">
+                <h1>Welcome to To-Do</h1>
+                <p>Organize your tasks beautifully</p>
+            </div>
+
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" placeholder="your@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="btn-primary">Sign In</button>
+                <div class="auth-toggle">
+                    Don't have an account? <a id="show-signup">Sign up</a>
+                </div>
+            </form>
+
+            <form id="signup-form" style="display: none;">
+                <div class="form-group">
+                    <label for="signup-email">Email</label>
+                    <input type="email" id="signup-email" placeholder="your@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-password">Password</label>
+                    <input type="password" id="signup-password" placeholder="At least 6 characters" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-confirm-password">Confirm Password</label>
+                    <input type="password" id="signup-confirm-password" placeholder="Confirm your password" required>
+                </div>
+                <button type="submit" class="btn-primary">Create Account</button>
+                <div class="auth-toggle">
+                    Already have an account? <a id="show-login">Sign in</a>
+                </div>
+            </form>
+        </div>
+
+        <div id="app-container">
+            <div class="todo-app">
+                <div class="app-header">
+                    <div class="header-left">
+                        <h2>
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 11l3 3L22 4"></path>
+                                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                            </svg>
+                            My Tasks
+                        </h2>
+                        <div class="user-info">
+                            <span id="user-email"></span>
+                        </div>
+                    </div>
+                    <div class="header-right">
+                        <button id="theme-toggle" class="icon-btn" title="Toggle theme">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                            </svg>
+                        </button>
+                        <button id="logout-btn" class="btn-logout">Logout</button>
+                    </div>
+                </div>
+
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <span class="stat-number" id="total-tasks">0</span>
+                        <span class="stat-label">Total Tasks</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="completed-tasks">0</span>
+                        <span class="stat-label">Completed</span>
+                    </div>
+                </div>
+
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+                    <span class="progress-text" id="progress-text">0%</span>
+                </div>
+
+                <div class="filters-container">
+                    <div class="filter-group">
+                        <label>Search Tasks</label>
+                        <input type="text" id="search-box" placeholder="Search...">
+                    </div>
+                    <div class="filter-group">
+                        <label>Status</label>
+                        <select id="status-filter">
+                            <option value="all">All Tasks</option>
+                            <option value="completed">Completed</option>
+                            <option value="uncompleted">Uncompleted</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Category</label>
+                        <select id="category-filter">
+                            <option value="all">All Categories</option>
+                            <option value="general">General</option>
+                            <option value="work">Work</option>
+                            <option value="personal">Personal</option>
+                            <option value="shopping">Shopping</option>
+                            <option value="health">Health</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="add-task-section">
+                    <div class="input-row">
+                        <input type="text" id="input-box" placeholder="What needs to be done?">
+                        <button id="add-task-btn" class="btn-add">Add Task</button>
+                    </div>
+                    <div class="task-options">
+                        <select id="priority-select">
+                            <option value="low">Low Priority</option>
+                            <option value="medium" selected>Medium Priority</option>
+                            <option value="high">High Priority</option>
+                        </select>
+                        <select id="category-select">
+                            <option value="general" selected>General</option>
+                            <option value="work">Work</option>
+                            <option value="personal">Personal</option>
+                            <option value="shopping">Shopping</option>
+                            <option value="health">Health</option>
+                        </select>
+                        <input type="date" id="due-date-input" placeholder="Due date">
+                    </div>
+                </div>
+
+                <ul id="list-container"></ul>
+
+                <button id="delete-all-btn" class="btn-delete-all">Delete All Tasks</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="edit-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Task</h3>
+                <button id="close-modal" class="close-btn">&times;</button>
+            </div>
+            <div class="form-group">
+                <label for="edit-title">Task Title</label>
+                <input type="text" id="edit-title">
+            </div>
+            <div class="form-group">
+                <label for="edit-priority">Priority</label>
+                <select id="edit-priority">
+                    <option value="low">Low Priority</option>
+                    <option value="medium">Medium Priority</option>
+                    <option value="high">High Priority</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="edit-category">Category</label>
+                <select id="edit-category">
+                    <option value="general">General</option>
+                    <option value="work">Work</option>
+                    <option value="personal">Personal</option>
+                    <option value="shopping">Shopping</option>
+                    <option value="health">Health</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="edit-due-date">Due Date</label>
+                <input type="date" id="edit-due-date">
+            </div>
+            <button id="save-edit-btn" class="btn-primary">Save Changes</button>
+        </div>
+    </div>
+
+</body>
+</html>
