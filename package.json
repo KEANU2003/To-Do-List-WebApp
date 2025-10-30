@@ -1,0 +1,18 @@
+{
+  "name": "project",
+  "version": "1.0.0",
+  "description": "یک اپلیکیشن ساده، زیبا و واکنش‌گرا برای مدیریت کارهای روزانه که با استفاده از **HTML**، **CSS** و **JavaScript** ساخته شده است.   داده‌ها به صورت محلی (لوکال) در مرورگر ذخیره می‌شوند و نیازی به بک‌اند یا پایگاه داده نیست.",
+  "main": "script.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.78.0",
+    "vite": "^7.1.12"
+  }
+}
